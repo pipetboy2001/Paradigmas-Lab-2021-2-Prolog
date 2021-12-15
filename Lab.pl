@@ -1,3 +1,9 @@
+%saber si esta lo pedido (login)
+%estaObjeto(objeto a borrar, lista).
+estaObjeto(X,[X|_]):-!.
+estaObjeto(X,[_|R]):-estaObjeto(X,R).
+
+
 %------------------------------------------------------------------------
 %REGISTER
 %------------------------------------------------------------------------
@@ -16,5 +22,23 @@ register([],"pipe","pass",Facebook2).
 register([],"pipe","pass",Facebook2),register(Facebook2,"user","pass2",Facebook3).
 register([],"pipe","pass",Facebook2),register(Facebook2,"user","pass2",Facebook3),register(Facebook3,"user","pass2",Facebook4).
 register([],"pipe","pass",Facebook2),register(Facebook2,"user","pass2",Facebook3),register(Facebook3,"user","pass2",Facebook4),register(Facebook4,"user","pass2",Facebook5).
+
+*/
+
+%-----------------------------------------------------------------------------------
+%login (socialNetworkLogin)
+%---------------------------------------------------------------------------------
+%funcionalidad:Stack que permite a un usuario ingresar en la red social
+%Dom: User(String) , Pass(String)
+%Rec: User(String) , Pass (String)
+
+login([_,_,_,_,_,[]], _, _, _):-false.
+login([Restorar,Add,Share,Create, UsuariosActivos, Registrados], User, Pass, [Restorar,Add,Share,Create, [[User,Pass]|UsuariosActivos], Registrados]):-estaObjeto([User,Pass,_], Registrados).
+/**Ejemplos de uso**
+
+register([],"pipe","pass",Facebook2),login(Facebook2,"pipe","pass",Facebook3).
+register([],"pipe","pass",Facebook2),register(Facebook2,"user","pass2",Facebook3),login(Facebook3,"pipe","pass",Facebook4).
+register([],"pipe","pass",Facebook2),login(Facebook2,"pipe","pass",Facebook3),register(Facebook3,"user","pass2",Facebook4).
+register([],"pipe","pass",Facebook2),login(Facebook2,"pipe","pass",Facebook3),register(Facebook3,"user","pass2",Facebook4),login(Facebook4,"pipe","pass",Facebook5).
 
 */
