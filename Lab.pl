@@ -114,4 +114,3 @@ register([],"pipe","pass",GoogleDoc2),register(GoogleDoc2,"user","pass2",GoogleD
 
 */
 
-/*por alguna razon  me mande una cagada en git*/
