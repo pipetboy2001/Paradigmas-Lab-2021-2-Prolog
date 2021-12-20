@@ -113,3 +113,5 @@ add([Restorar,Add,Share,Create, [[User,Pass]], Registrados], Fecha, IdPost, Come
 register([],"pipe","pass",GoogleDoc2),register(GoogleDoc2,"user","pass2",GoogleDoc3),login(GoogleDoc3,"pipe","pass",GoogleDoc4),post(GoogleDoc4, "1.1.2021", "pregunta1", ["user1","user2"], GoogleDoc5),login(GoogleDoc5,"user","pass2",GoogleDoc6),add(GoogleDoc6, "2.1.2020", 1, "en efecto", ["user1", "user2", "user3"], GoogleDoc7).
 
 */
+
+/*por alguna razon  me mande una cagada en git*/
