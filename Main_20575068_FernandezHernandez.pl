@@ -197,3 +197,19 @@ restorar([[[["user1","pass1"], "1.1.2020", "Pregunta1", ["tag1"]]], [[["user2", 
 % paradigmaDocsSearch:
 %...................................
 %dom paradigmaDocs X string X List Document 
+
+search([_,_,_,[],_,_],_,_):-false.
+search([Restorar,Add,Share,Create, [[User,Pass]], Registrados], Buscar, [Restorar,Add,[[[User,Pass], Buscar]],Create, Registrados]).
+search([Restorar,Add,Share, Create, [[User,Pass]], Registrados], Buscar , [Restorar,Add,[[[User,Pass], Buscar]],Create, Registrados])
+:-(estaUser(Buscar,Follow)).
+
+%revisar si estab el string (search)
+%estaUser(Usuario en encontrar, lista de usuario).
+estaUser(Seguidor,[_,_,Seguidor]|_ ):-!.
+estaUser(Seguidor,[_|Resto]):-estaUser(Seguidor,Resto).
+
+/*
+register([],"Pipe","pass",Facebook2),register(Facebook2,"juan","pass2",Facebook3),login(Facebook3,"Pipe","pass",Facebook4),search(Facebook5,"juan",Facebook6).
+
+*/
+
