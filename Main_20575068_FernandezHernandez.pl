@@ -24,6 +24,7 @@ cambiarEstado(Id de la pregunta, Usuario autor, contraseña, CreateCambiado, Cre
 cambioDocActual(Usuario, contraseña, nuevo cambio, lista de usuario, lista de usuario, lista de usuario con el cambio del usuario).
 estaId(Id, stack Doc creado).
 */
+
 /*
 register(Docinicial, nombre de usuario, contraseña, DocFinal).
 login(Docinicial, nombre de usuario, contraseña, DocFinal).
@@ -32,8 +33,8 @@ Share(DocInicial,fecha,id del doc, permiso,DocFinal)
 Add(Docinicial, fecha, id del doc, agregar palabra, lista de usuario, DocFinal).
 Restore(Docinicial, id de doc actual, id del doc nuevo, DocFinal).
 */
-%Cláusulas secundarias
 
+%Cláusulas secundarias
 %saber si esta lo pedido (login)
 %estaObjeto(objeto a borrar, lista).
 estaObjeto(X,[X|_]):-!.
@@ -42,15 +43,6 @@ estaObjeto(X,[_|R]):-estaObjeto(X,R).
 %obtener el ID (post ,Add ,share)
 %getId(Lista Doc creado, Id).
 getId([[_,_,_,_,_,Id]|_], Id).
-%revisar si concuerdan los ID (share and Add)
-%estaId(Id, GoogleDoc Doc creado).
-estaId(Id,[[_,_,_,_,_,Id]|_]):-!.
-estaId(Id,[_|Resto]):-estaId(Id,Resto).
-
-%cambiar el estado 
-%cambiarEstado(Id de la pregunta, Usuario autor, contraseña, CreateCambiado, CreateCambiado, Create Cambiado con la pregunta cerrada).
-cambiarEstado(Id, User, Pass, ListaOriginal, [[[User, Pass],Fecha,Pregunta,Tags, _, Id]|_], [[[User, Pass],Fecha,Pregunta,Tags, 1, Id]|PreguntasEdit]):-borrarObjeto([[User, Pass],Fecha,Pregunta,Tags, _, Id], ListaOriginal, PreguntasEdit),!.
-cambiarEstado(Id, User, Pass, ListaOriginal, [_|Create], Resultado):-cambiarEstado(Id, User, Pass, ListaOriginal,Create, Resultado).
 
 %obtener el autor o creador (como se le quiera decir)
 %GetAutor(Id, stack Doc creado, nombre de usuario, contraseña del usuario)
@@ -62,11 +54,20 @@ getAutor(Id, [_|Resto], User, Pass):-getAutor(Id, Resto, User, Pass).
 borrarObjeto(X, [X|T], T).
 borrarObjeto(X, [H|T], [H|TailEdit]):-borrarObjeto(X, T, TailEdit).
 
+%cambiar el estado 
+%cambiarEstado(Id de la pregunta, Usuario autor, contraseña, CreateCambiado, CreateCambiado, Create Cambiado con la pregunta cerrada).
+cambiarEstado(Id, User, Pass, ListaOriginal, [[[User, Pass],Fecha,Pregunta,Tags, _, Id]|_], [[[User, Pass],Fecha,Pregunta,Tags, 1, Id]|PreguntasEdit]):-borrarObjeto([[User, Pass],Fecha,Pregunta,Tags, _, Id], ListaOriginal, PreguntasEdit),!.
+cambiarEstado(Id, User, Pass, ListaOriginal, [_|Preguntas], Resultado):-cambiarEstado(Id, User, Pass, ListaOriginal,Preguntas, Resultado).
+
 %cambia el estado al anterior segun el ID que se le indique
 %cambioDocActual(Usuario, contraseña, nuevo cambio, lista de usuario, lista de usuario, lista de usuario con el cambio del usuario).
 cambioDocActual(User, Pass, Cantidad, ListaOriginal, [[User, Pass, Rep]|_], [[User,Pass,RepEdit]|UsuariosEditado]):-borrarObjeto([User, Pass, Rep], ListaOriginal, UsuariosEditado), RepEdit is Cantidad + Rep, !.
 cambioDocActual(User, Pass, Cantidad, ListaOriginal, [_|Registrados], Resultado):-cambioDocActual(User,Pass,Cantidad,ListaOriginal,Registrados, Resultado).
 
+%revisar si concuerdan los ID (share and Add)
+%estaId(Id, GoogleDoc Doc creado).
+estaId(Id,[[_,_,_,_,_,Id]|_]):-!.
+estaId(Id,[_|Resto]):-estaId(Id,Resto).
 
 
 %------------------------------------------------------------------------
@@ -127,11 +128,8 @@ register([],"user1","pass",GoogleDoc2),login(GoogleDoc2,"user1","pass",GoogleDoc
 register([],"Juan","pass",GoogleDoc2),login(GoogleDoc2,"Juan","pass",GoogleDoc3),post(GoogleDoc3, "1.3.2021", "que lindo dia", ["user1","user2"], GoogleDoc4).
 
 register([],"pipe","pass",GoogleDoc2),login(GoogleDoc2,"pipe","pass",GoogleDoc3),register(GoogleDoc3,"user","pass2",GoogleDoc4),login(GoogleDoc4,"pipe","pass",GoogleDoc5),post(GoogleDoc6, "1.3.2021", "esto es un post", ["user1","user2"], GoogleDoc7).
-**
 
 */
-/*y como funciona?*/
-%registras a pipe , login pipe , post pipe
 
 %------------------------------------------------------------------------------------
 %Share
@@ -151,9 +149,6 @@ register([],"Pipe","pass",GoogleDoc2),register(GoogleDoc2,"juan","pass2",GoogleD
 
 */
 
-/*y como funciona?*/
-%registras a pipe , registras a juan , ingresa pipe , postea pipe , ingresa juan , comparte lo de pipe
-%buscador de id si existe , aplicar funcion Post
 
 %----------------------------------
 %add 
@@ -177,20 +172,16 @@ register([],"pipe","pass",GoogleDoc2),register(GoogleDoc2,"user","pass2",GoogleD
 %----------------------------------
 %funcionalidad
 %Dom ParadigmaDocs X int X int X ParadigmaDocs 
-restorar([[],_,_,[], _, _], _, _, _, _):-false.
-restorar([_,Add,_, Create, [[User,Pass]], Registrados], IdPost, NewId, [Add, CreateEditado, [], RegistradosEditado2] ):-
-estaId(IdPost, Create), estaId(NewId, Add),
-  cambiarEstado(IdPost, User, Pass, Create, Create, CreateEditado), getAutor(NewId, Add, UserAutorRespuesta, PassAutorRespuesta),
+restore([[_],[_],[],[_]], _, _, _):-false.
+restore([Respuestas, Preguntas, [[User,Pass]], Registrados], IdPregunta, IdRespuesta, [Respuestas, PreguntasEditado, [], RegistradosEditado2]):-
+  estaId(IdPregunta, Preguntas), estaId(IdRespuesta, Respuestas),
+  cambiarEstado(IdPregunta, User, Pass, Preguntas, Preguntas, PreguntasEditado), getAutor(IdRespuesta, Respuestas, UserAutorRespuesta, PassAutorRespuesta),
   cambioDocActual(UserAutorRespuesta, PassAutorRespuesta, 15, Registrados, Registrados, RegistradosEditado), cambioDocActual(User,Pass,2,RegistradosEditado, RegistradosEditado, RegistradosEditado2).
 
-%primero el idPost a
-%luego que devuelvemos
-%parametros 0 a 1
-/*ejemplo de uso 
-
-restorar([[[["user1","pass1"], "1.1.2020", "Pregunta1", ["tag1"]]], [[["user2", "pass2"], "2.1.2020", "ola?", ["tag1"], 0, 1]], [["user2", "pass2"]], [["user1", "pass1"], ["user2", "pass2"]]], 1, 1, GoogleDoc2).
-
-*/
+%Ejemplos de uso
+%restore([[[["user1","pass1"], "1.1.2020", "en efecto", ["tag1"], 1, 1]], [[["user2", "pass2"], "2.1.2020", "ola?", ["tag1"], 0, 1]], [["user2", "pass2"]], [["user1", "pass1", 10], ["user2", "pass2", 10]]], 1, 1, Stack2).
+%restore([[[["Thanatos","pass1"], "1.1.2020", "up", ["tag1"], 1, 1]], [[["TartarusIndominus", "pass2"], "2.1.2020", "Algún trabajo para ingeniero de software recién egresado?", ["job"], 0, 1]], [["TartarusIndominus", "pass2"]], [["Thanatos", "pass1", 10], ["TartarusIndominus", "pass2", 10]]], 1, 1, Stack2).
+%restore([[[["SovietTovarich99","pass1"], "1.1.2020", "yes", ["tag1"], 1, 1]], [[["BonaparteWaterloo", "pass2"], "2.1.2020", "Python es gratis?", ["python"], 0, 1]], [["BonaparteWaterloo", "pass2"]], [["SovietTovarich99", "pass1", 10], ["BonaparteWaterloo", "pass2", 10]]], 1, 1, Stack2).
 
 
 %-------------------------------------
@@ -201,15 +192,15 @@ restorar([[[["user1","pass1"], "1.1.2020", "Pregunta1", ["tag1"]]], [[["user2", 
 search([_,_,_,[],_,_],_,_):-false.
 search([Restorar,Add,Share,Create, [[User,Pass]], Registrados], Buscar, [Restorar,Add,[[[User,Pass], Buscar]],Create, Registrados]).
 search([Restorar,Add,Share, Create, [[User,Pass]], Registrados], Buscar , [Restorar,Add,[[[User,Pass], Buscar]],Create, Registrados])
-:-(estaUser(Buscar,Follow)).
+:-(estaString(Buscar,Create)).
 
 %revisar si estab el string (search)
-%estaUser(Usuario en encontrar, lista de usuario).
-estaUser(Seguidor,[_,_,Seguidor]|_ ):-!.
-estaUser(Seguidor,[_|Resto]):-estaUser(Seguidor,Resto).
+%estaString(Usuario en encontrar, lista de usuario).
+estaString(Seguidor,[_,_,Seguidor]|_ ):-!.
+estaString(Seguidor,[_|Resto]):-estaString(Seguidor,Resto).
 
 /*
-register([],"Pipe","pass",Facebook2),register(Facebook2,"juan","pass2",Facebook3),login(Facebook3,"Pipe","pass",Facebook4),search(Facebook5,"juan",Facebook6).
-
+register([],"Pipe","pass",GoogleDoc2),register(GoogleDoc2,"juan","pass2",GoogleDoc3),login(GoogleDoc3,"Pipe","pass",GoogleDoc4),search(GoogleDoc5,"juan",GoogleDoc6).
 */
+
 
